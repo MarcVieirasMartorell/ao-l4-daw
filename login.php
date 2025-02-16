@@ -1,12 +1,6 @@
 <?php
 require 'config.php';
 session_start();
-if (isset($_SESSION['user'])) {
-    header("Location: dashboard.php"); // Evita que un usuario logueado vuelva a login
-    exit();
-}
-
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
@@ -30,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h2>Iniciar Sesión</h2>

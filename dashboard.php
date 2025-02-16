@@ -1,35 +1,30 @@
 <?php
+session_start();
 require 'config.php';
-session_start(); 
+
 if (!isset($_SESSION['user'])) {
-    header("Location: login.php"); // Redirigir a login si no hay sesión
-    exit();
+    die("<p>Acceso denegado. Inicia sesión primero.</p>");
 }
 
-$stmt = $pdo->prepare("SELECT id, username, profile_picture FROM usuarios WHERE username = ?");
-$stmt->execute([$_SESSION['user']]);
-$user = $stmt->fetch(PDO::FETCH_OBJ);
+$stmt = $pdo->prepare("SELECT foto_perfil FROM usuarios WHERE username = :username");
+$stmt->bindParam(":username", $_SESSION['user']);
+$stmt->execute();
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-echo "<h2>Bienvenido, {$user->username}</h2>";
-echo "<p>Tu ID de usuario es: {$user->id}</p>";
-
-if ($user->profile_picture) {
-    echo "<img src='{$user->profile_picture}' alt='Imagen de perfil' width='150'>";
-} else {
-    echo "<p>No tienes imagen de perfil.</p>";
-}
+$fotoPerfil = $usuario['foto_perfil'] ? htmlspecialchars($usuario['foto_perfil']) : 'default.png';
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Panel de Usuario</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h2>Bienvenido, <?= $_SESSION['user'] ?></h2>
+    <h2>Bienvenido, <?= htmlspecialchars($_SESSION['user']) ?></h2>
+    <img src="<?= $fotoPerfil ?>" width="150" height="150" alt="Foto de perfil">
+    <br>
     <a href="index.php">Volver</a>
 </body>
 </html>

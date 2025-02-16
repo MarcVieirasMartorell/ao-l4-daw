@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user'])) {
 <head>
     <meta charset="UTF-8">
     <title>Eliminar Cuenta</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h2>Eliminar Cuenta</h2>

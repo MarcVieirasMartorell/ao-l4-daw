@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user'])) {
 <head>
     <meta charset="UTF-8">
     <title>Actualizar Usuario</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h2>Actualizar Usuario</h2>

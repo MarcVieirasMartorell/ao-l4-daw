@@ -1,25 +1,23 @@
 <?php
 require 'config.php';
 
-// Conexión con MySQLi
-$mysqli = new mysqli($host, $username, $password, $dbname);
-if ($mysqli->connect_error) {
-    die("Error de conexión MySQLi: " . $mysqli->connect_error);
-}
+$results = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['query'])) {
-    $search = "%" . $mysqli->real_escape_string($_GET['query']) . "%";
-    $stmt = $mysqli->prepare("SELECT id, username FROM usuarios WHERE username LIKE ?");
-    $stmt->bind_param("s", $search);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $search = "%" . $_GET['query'] . "%";
 
-    $usuarios = [];
-    while ($row = $result->fetch_assoc()) {
-        $usuarios[] = $row;
+    $mysqli = new mysqli($host, $username, $password, $dbname);
+
+    if ($mysqli->connect_error) {
+        die("Error de conexión: " . $mysqli->connect_error);
     }
 
-    echo json_encode($usuarios);
+    $stmt = $mysqli->prepare("SELECT username, foto_perfil FROM usuarios WHERE username LIKE ?");
+    $stmt->bind_param("s", $search); // "s" INDICA QUE EL PARAMETRO ES UN STRING.
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $results = $result->fetch_all(MYSQLI_ASSOC);
+
     $stmt->close();
     $mysqli->close();
 }
@@ -30,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['query'])) {
 <head>
     <meta charset="UTF-8">
     <title>Buscar Usuario</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h2>Buscar Usuario</h2>
@@ -40,7 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['query'])) {
     <ul>
         <?php if (!empty($results)) {
             foreach ($results as $user) {
-                echo "<li>" . htmlspecialchars($user['username']) . "</li>";
+                $fotoPerfil = $user['foto_perfil'] ? htmlspecialchars($user['foto_perfil']) : 'default.png';
+                echo "<li>
+                        <img src='$fotoPerfil' width='50' height='50' alt='Foto de perfil'>
+                        " . htmlspecialchars($user['username']) . "
+                      </li>";
             }
         } ?>
     </ul>
